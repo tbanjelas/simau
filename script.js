@@ -1,247 +1,292 @@
+/**
+ * TAMAN BACA ANJELAS - CUSTOM JAVASCRIPT
+ * Versi 2.0 - Agustus 2023
+ * Dikembangkan khusus untuk Taman Baca Anjelas
+ */
+
 document.addEventListener('DOMContentLoaded', function() {
     // ======================
-    // GLOBAL VARIABLES
+    // INISIALISASI VARIABEL
     // ======================
     const body = document.body;
     const header = document.querySelector('header');
-    const scrollUp = document.createElement('div');
-    scrollUp.className = 'scroll-up';
-    scrollUp.innerHTML = '<i class="fas fa-arrow-up"></i>';
-    body.appendChild(scrollUp);
+    const mainContent = document.querySelector('main');
+    
+    // ======================
+    // LOADER HALAMAN
+    // ======================
+    function initPageLoader() {
+        const loader = document.createElement('div');
+        loader.className = 'page-loader';
+        loader.innerHTML = `
+            <div class="loader-logo">
+                <span>TBA</span>
+            </div>
+            <div class="loader-spinner"></div>
+        `;
+        body.appendChild(loader);
+        
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                loader.classList.add('loaded');
+                setTimeout(() => {
+                    body.removeChild(loader);
+                }, 500);
+            }, 1000);
+        });
+    }
 
     // ======================
-    // NAVIGATION FUNCTIONALITY
+    // NAVIGASI UTAMA
     // ======================
-    
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('nav a').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
+    function initNavigation() {
+        // Smooth scrolling
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update active nav
+                    updateActiveNav(this);
+                    
+                    // Tutup mobile menu jika terbuka
+                    if (window.innerWidth <= 768) {
+                        document.querySelector('nav ul').classList.remove('active');
+                        document.querySelector('.mobile-menu-toggle').classList.remove('active');
+                    }
+                }
+            });
+        });
+        
+        // Highlight section aktif
+        window.addEventListener('scroll', throttle(function() {
+            const scrollPosition = window.scrollY;
             
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
+            document.querySelectorAll('section').forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    const correspondingNav = document.querySelector(`nav a[href="#${sectionId}"]`);
+                    if (correspondingNav) {
+                        updateActiveNav(correspondingNav);
+                    }
+                }
+            });
+        }, 100));
+        
+        function updateActiveNav(activeElement) {
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            activeElement.classList.add('active');
+        }
+    }
+
+    // ======================
+    // MOBILE MENU
+    // ======================
+    function initMobileMenu() {
+        if (window.innerWidth <= 768) {
+            const nav = document.querySelector('nav ul');
+            const menuToggle = document.createElement('div');
+            menuToggle.className = 'mobile-menu-toggle';
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            header.insertBefore(menuToggle, document.querySelector('.language-search'));
             
-            window.scrollTo({
-                top: targetElement.offsetTop - 80,
-                behavior: 'smooth'
+            menuToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                nav.classList.toggle('active');
+                body.classList.toggle('menu-open');
             });
             
-            // Update active nav item
-            updateActiveNav(this);
-        });
-    });
-    
-    // Highlight current section in navigation
-    window.addEventListener('scroll', function() {
-        const scrollPosition = window.scrollY;
-        
-        document.querySelectorAll('section').forEach(section => {
-            const sectionTop = section.offsetTop - 100;
-            const sectionHeight = section.offsetHeight;
-            const sectionId = section.getAttribute('id');
-            
-            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                const correspondingNav = document.querySelector(`nav a[href="#${sectionId}"]`);
-                if (correspondingNav) {
-                    updateActiveNav(correspondingNav);
+            // Tutup menu saat klik di luar
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('nav') && !e.target.closest('.mobile-menu-toggle')) {
+                    menuToggle.classList.remove('active');
+                    nav.classList.remove('active');
+                    body.classList.remove('menu-open');
                 }
-            }
-        });
-
-        // Show/hide scroll up button
-        if (window.scrollY > 300) {
-            scrollUp.classList.add('show');
-        } else {
-            scrollUp.classList.remove('show');
+            });
         }
-
-        // Header shadow on scroll
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
-
-    function updateActiveNav(activeElement) {
-        document.querySelectorAll('nav a').forEach(link => {
-            link.classList.remove('active');
-        });
-        activeElement.classList.add('active');
     }
 
-    // Scroll to top functionality
-    scrollUp.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-
     // ======================
-    // LANGUAGE SWITCHER
+    // ANIMASI SCROLL
     // ======================
-    const languageSwitcher = document.querySelector('.language-switcher');
-    if (languageSwitcher) {
-        languageSwitcher.addEventListener('click', function(e) {
-            if (e.target.tagName === 'SPAN') {
-                const language = e.target.textContent;
-                const languageText = language === 'ID' ? 'Bahasa Indonesia' : 'English';
-                
-                showNotification(`Bahasa diubah ke ${languageText}`);
-                
-                document.querySelectorAll('.language-switcher span').forEach(span => {
-                    span.classList.remove('active');
-                });
-                e.target.classList.add('active');
-            }
+    function initScrollAnimations() {
+        const animateElements = document.querySelectorAll('.animate-on-scroll');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        animateElements.forEach(element => {
+            observer.observe(element);
         });
     }
 
     // ======================
-    // SEARCH FUNCTIONALITY
+    // GALERI INTERAKTIF
     // ======================
-    const searchForm = document.querySelector('.search-bar');
-    if (searchForm) {
-        searchForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const searchInput = this.querySelector('input');
-            const searchTerm = searchInput.value.trim();
+    function initGallery() {
+        const galleryItems = document.querySelectorAll('.work-item');
+        
+        galleryItems.forEach(item => {
+            // Efek hover
+            item.addEventListener('mouseenter', function() {
+                this.querySelector('img').style.transform = 'scale(1.05)';
+                this.querySelector('.work-caption').style.opacity = '1';
+            });
             
-            if (searchTerm) {
-                showNotification(`Mencari: "${searchTerm}"`);
-                searchInput.value = '';
-            }
+            item.addEventListener('mouseleave', function() {
+                this.querySelector('img').style.transform = 'scale(1)';
+                this.querySelector('.work-caption').style.opacity = '0.9';
+            });
+            
+            // Lightbox
+            item.querySelector('img').addEventListener('click', function() {
+                createLightbox(this);
+            });
         });
+        
+        function createLightbox(image) {
+            const lightbox = document.createElement('div');
+            lightbox.className = 'lightbox';
+            
+            const lightboxContent = document.createElement('div');
+            lightboxContent.className = 'lightbox-content';
+            
+            const img = document.createElement('img');
+            img.src = image.src;
+            img.alt = image.alt;
+            
+            const caption = document.createElement('p');
+            caption.textContent = image.parentElement.querySelector('.work-caption').textContent;
+            
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'close-btn';
+            closeBtn.innerHTML = '&times;';
+            
+            lightboxContent.appendChild(closeBtn);
+            lightboxContent.appendChild(img);
+            lightboxContent.appendChild(caption);
+            lightbox.appendChild(lightboxContent);
+            body.appendChild(lightbox);
+            
+            setTimeout(() => {
+                lightbox.classList.add('active');
+            }, 10);
+            
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                setTimeout(() => {
+                    body.removeChild(lightbox);
+                }, 300);
+            }
+            
+            closeBtn.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+            
+            document.addEventListener('keydown', function escClose(e) {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                    document.removeEventListener('keydown', escClose);
+                }
+            });
+        }
     }
 
     // ======================
-    // CONTACT FORM HANDLING
+    // FORM KONTAK
     // ======================
-    const contactForm = document.querySelector('.contact-form form');
-    if (contactForm) {
+    function initContactForm() {
+        const contactForm = document.querySelector('.contact-form form');
+        if (!contactForm) return;
+        
+        const formInputs = contactForm.querySelectorAll('input, textarea');
+        
+        formInputs.forEach(input => {
+            // Efek focus
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            // Efek blur
+            input.addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+            
+            // Cek isi input saat load
+            if (input.value !== '') {
+                input.parentElement.classList.add('focused');
+            }
+        });
+        
+        // Submit handler
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const formData = {
-                name: this.querySelector('#name').value,
-                email: this.querySelector('#email').value,
-                message: this.querySelector('#message').value
+                name: this.querySelector('#name').value.trim(),
+                email: this.querySelector('#email').value.trim(),
+                message: this.querySelector('#message').value.trim()
             };
             
-            // Basic validation
+            // Validasi
             if (!formData.name || !formData.email || !formData.message) {
                 showNotification('Harap isi semua kolom', 'error');
                 return;
             }
             
             if (!validateEmail(formData.email)) {
-                showNotification('Harap masukkan alamat email yang valid', 'error');
+                showNotification('Email tidak valid', 'error');
                 return;
             }
             
-            // Simulate form submission
-            showNotification('Pesan Anda telah terkirim! Kami akan segera menghubungi Anda.', 'success');
+            // Simpan ke localStorage (simulasi)
+            saveContactMessage(formData);
+            
+            // Tampilkan notifikasi
+            showNotification('Pesan berhasil dikirim!', 'success');
+            
+            // Reset form
             this.reset();
-            
-            // In a real implementation, you would send the data to a server here
-            // sendFormData(formData);
+            formInputs.forEach(input => {
+                input.parentElement.classList.remove('focused');
+            });
         });
-    }
-
-    // ======================
-    // GALLERY FUNCTIONALITY
-    // ======================
-    // Lightbox functionality for gallery images
-    document.querySelectorAll('.work-item img').forEach(image => {
-        image.addEventListener('click', function() {
-            createLightbox(this);
-        });
-    });
-
-    function createLightbox(image) {
-        const lightbox = document.createElement('div');
-        lightbox.className = 'lightbox';
         
-        const lightboxContent = document.createElement('div');
-        lightboxContent.className = 'lightbox-content';
-        
-        const lightboxImage = document.createElement('img');
-        lightboxImage.src = image.src;
-        lightboxImage.alt = image.alt;
-        
-        const caption = document.createElement('p');
-        caption.textContent = image.parentElement.querySelector('.work-caption').textContent;
-        
-        const closeBtn = document.createElement('span');
-        closeBtn.className = 'close-btn';
-        closeBtn.innerHTML = '&times;';
-        
-        lightboxContent.appendChild(closeBtn);
-        lightboxContent.appendChild(lightboxImage);
-        lightboxContent.appendChild(caption);
-        lightbox.appendChild(lightboxContent);
-        body.appendChild(lightbox);
-        
-        // Add active class after a short delay
-        setTimeout(() => {
-            lightbox.classList.add('active');
-        }, 10);
-        
-        // Close lightbox
-        function closeLightbox() {
-            lightbox.classList.remove('active');
-            setTimeout(() => {
-                body.removeChild(lightbox);
-            }, 300);
+        function saveContactMessage(data) {
+            let messages = JSON.parse(localStorage.getItem('tba_contact_messages') || '[]');
+            messages.push({
+                ...data,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('tba_contact_messages', JSON.stringify(messages));
         }
-        
-        closeBtn.addEventListener('click', closeLightbox);
-        lightbox.addEventListener('click', function(e) {
-            if (e.target === lightbox) {
-                closeLightbox();
-            }
-        });
-        
-        // Close with ESC key
-        document.addEventListener('keydown', function escClose(e) {
-            if (e.key === 'Escape') {
-                closeLightbox();
-                document.removeEventListener('keydown', escClose);
-            }
-        });
     }
 
     // ======================
-    // ANIMATIONS
-    // ======================
-    // Animate elements when they come into view
-    const animateOnScroll = function() {
-        const elements = document.querySelectorAll('.pillar, .activity, .founder, .work-item');
-        
-        elements.forEach(element => {
-            const elementPosition = element.getBoundingClientRect().top;
-            const windowHeight = window.innerHeight;
-            
-            if (elementPosition < windowHeight - 100) {
-                element.classList.add('animated');
-            }
-        });
-    };
-    
-    // Set initial state for animated elements
-    document.querySelectorAll('.pillar, .activity, .founder, .work-item').forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(30px)';
-        element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    });
-    
-    // Run once on load and then on scroll
-    animateOnScroll();
-    window.addEventListener('scroll', animateOnScroll);
-
-    // ======================
-    // HELPER FUNCTIONS
+    // NOTIFIKASI
     // ======================
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
@@ -261,62 +306,224 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         }, 3000);
     }
-    
+
+    // ======================
+    // UTILITY FUNCTIONS
+    // ======================
     function validateEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     }
+    
+    function throttle(func, limit) {
+        let lastFunc;
+        let lastRan;
+        return function() {
+            const context = this;
+            const args = arguments;
+            if (!lastRan) {
+                func.apply(context, args);
+                lastRan = Date.now();
+            } else {
+                clearTimeout(lastFunc);
+                lastFunc = setTimeout(function() {
+                    if ((Date.now() - lastRan) >= limit) {
+                        func.apply(context, args);
+                        lastRan = Date.now();
+                    }
+                }, limit - (Date.now() - lastRan));
+            }
+        }
+    }
 
     // ======================
-    // ADDITIONAL STYLES FOR JS ELEMENTS
+    // INISIALISASI SEMUA FITUR
     // ======================
-    const style = document.createElement('style');
-    style.textContent = `
-        /* Scroll Up Button */
-        .scroll-up {
+    initPageLoader();
+    initNavigation();
+    initMobileMenu();
+    initScrollAnimations();
+    initGallery();
+    initContactForm();
+
+    // ======================
+    // STYLE DINAMIS
+    // ======================
+    const dynamicStyles = document.createElement('style');
+    dynamicStyles.textContent = `
+        /* Loader */
+        .page-loader {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loader-logo {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+        
+        .loader-logo span {
+            color: var(--dark);
+        }
+        
+        .loader-spinner {
             width: 50px;
             height: 50px;
-            background-color: var(--primary);
-            color: white;
+            border: 5px solid var(--light);
+            border-top-color: var(--primary);
             border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .page-loader.loaded {
+            opacity: 0;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.2rem;
-            cursor: pointer;
+            z-index: 1000;
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            z-index: 999;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s ease;
         }
         
-        .scroll-up.show {
+        .lightbox.active {
             opacity: 1;
-            transform: translateY(0);
         }
         
-        .scroll-up:hover {
-            background-color: #e05d00;
-            transform: translateY(-5px);
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
         }
         
-        /* Scrolled Header */
-        header.scrolled {
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            border-radius: 5px;
         }
         
-        /* Animated Elements */
-        .pillar.animated,
-        .activity.animated,
-        .founder.animated,
-        .work-item.animated {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
+        .lightbox-content p {
+            color: white;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: var(--secondary);
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: var(--dark);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background-color: var(--primary);
+        }
+        
+        .notification.error {
+            background-color: #e74c3c;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+            padding: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            nav ul {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background-color: var(--white);
+                flex-direction: column;
+                align-items: center;
+                padding: 1rem 0;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+            
+            nav ul.active {
+                transform: translateY(0);
+            }
+            
+            nav ul li {
+                margin: 0.5rem 0;
+                width: 100%;
+                text-align: center;
+            }
+            
+            nav ul li a {
+                display: block;
+                padding: 0.5rem 1rem;
+            }
+            
+            body.menu-open {
+                overflow: hidden;
+            }
         }
     `;
-    document.head.appendChild(style);
+    document.head.appendChild(dynamicStyles);
 });
