@@ -1,80 +1,595 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Taman Baca Anjelas</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taman Baca Anjelas - Belajar, Bermain, Tumbuh Bersama</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c8a4f;
+            --secondary-color: #f5a623;
+            --light-color: #f8f9fa;
+            --dark-color: #333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: var(--dark-color);
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .language-search {
+            display: flex;
+            align-items: center;
+        }
+        
+        .language-switcher {
+            margin-right: 1rem;
+        }
+        
+        .search-bar {
+            display: flex;
+        }
+        
+        .search-bar input {
+            padding: 0.3rem;
+            border: none;
+            border-radius: 3px 0 0 3px;
+        }
+        
+        .search-bar button {
+            background-color: var(--secondary-color);
+            border: none;
+            padding: 0.3rem 0.5rem;
+            border-radius: 0 3px 3px 0;
+            cursor: pointer;
+        }
+        
+        .hero {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .pillars {
+            display: flex;
+            justify-content: space-around;
+            padding: 3rem 0;
+            background-color: var(--light-color);
+        }
+        
+        .pillar {
+            text-align: center;
+            padding: 1.5rem;
+            width: 30%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .pillar i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin: 3rem 0;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        
+        .activities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+        }
+        
+        .activity {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .activity img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .activity-content {
+            padding: 1.5rem;
+        }
+        
+        .about {
+            background-color: var(--light-color);
+            padding: 3rem 0;
+        }
+        
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .about-text {
+            flex: 1;
+        }
+        
+        .about-image {
+            flex: 1;
+        }
+        
+        .about-image img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        
+        .founders {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .founder {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .founder img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+        }
+        
+        .children-works {
+            padding: 3rem 0;
+        }
+        
+        .works-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .work-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        
+        .work-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .work-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .work-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        
+        .contact {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .contact-container {
+            display: flex;
+            gap: 3rem;
+        }
+        
+        .contact-form {
+            flex: 1;
+        }
+        
+        .contact-info {
+            flex: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        .form-group textarea {
+            height: 150px;
+        }
+        
+        .submit-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background-color: #e69500;
+        }
+        
+        .social-links {
+            margin-top: 2rem;
+        }
+        
+        .social-links a {
+            color: white;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+            }
+            
+            .about-content {
+                flex-direction: column;
+            }
+            
+            .contact-container {
+                flex-direction: column;
+            }
+            
+            .pillars {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .pillar {
+                width: 80%;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header/Navbar -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span>TBA</span> Taman Baca Anjelas
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#beranda">Beranda</a></li>
+                        <li><a href="#kegiatan">Kegiatan</a></li>
+                        <li><a href="#karya">Karya Anak</a></li>
+                        <li><a href="#tentang">Tentang Kami</a></li>
+                        <li><a href="#galeri">Galeri</a></li>
+                        <li><a href="#kontak">Kontak</a></li>
+                    </ul>
+                </nav>
+                <div class="language-search">
+                    <div class="language-switcher">
+                        <span>ID</span> | <span>EN</span>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search...">
+                        <button><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
-  <!-- HEADER -->
-  <header>
-    <nav>
-      <ul>
-        <li><a href="#beranda">Beranda</a></li>
-        <li><a href="#kegiatan">Kegiatan</a></li>
-        <li><a href="#karya">Karya Anak</a></li>
-        <li><a href="#tentang">Tentang Kami</a></li>
-        <li><a href="#galeri">Galeri</a></li>
-        <li><a href="#kontak">Kontak</a></li>
-      </ul>
-    </nav>
-  </header>
+    <!-- Hero Section -->
+    <section class="hero" id="beranda">
+        <div class="hero-content">
+            <h1>Taman Baca Anjelas</h1>
+            <p>Belajar – Bermain – Tumbuh Bersama</p>
+            <p>Selamat datang di Taman Baca Anjelas — Desa Bijeli- Noemuti - TTU - NTT</p>
+        </div>
+    </section>
 
-  <!-- BERANDA -->
-  <section id="beranda">
-    <div class="hero">
-      <h1>Selamat Datang di Taman Baca Anjelas</h1>
-      <p>Belajar – Bermain – Tumbuh Bersama</p>
-    </div>
-  </section>
+    <!-- Pillars Section -->
+    <section class="pillars">
+        <div class="pillar">
+            <i class="fas fa-book"></i>
+            <h2>BELAJAR</h2>
+            <p>Program pendidikan dan literasi untuk anak-anak</p>
+        </div>
+        <div class="pillar">
+            <i class="fas fa-gamepad"></i>
+            <h2>BERMAIN</h2>
+            <p>Aktivitas menyenangkan untuk pengembangan kreativitas</p>
+        </div>
+        <div class="pillar">
+            <i class="fas fa-hands-helping"></i>
+            <h2>AKSI SOSIAL</h2>
+            <p>Kegiatan sosial untuk membantu masyarakat sekitar</p>
+        </div>
+    </section>
 
-  <!-- KEGIATAN -->
-  <section id="kegiatan">
-    <h2>Kegiatan Kami</h2>
-    <p>Informasi tentang kegiatan yang dilakukan di Taman Baca Anjelas.</p>
-    <!-- Tambahkan informasi kegiatan -->
-  </section>
+    <!-- Activities Section -->
+    <section id="kegiatan">
+        <h2 class="section-title">KEGIATAN</h2>
+        <div class="activities">
+            <div class="activity">
+                <img src="belajar.jpg" alt="Kegiatan Belajar">
+                <div class="activity-content">
+                    <h3>BELAJAR</h3>
+                    <p>Hari Senin tanggal 23 Juni 2025 anak-anak belajar membaca dan menulis bersama mentor.</p>
+                </div>
+            </div>
+            <div class="activity">
+                <img src="bermain.jpg" alt="Kegiatan Bermain">
+                <div class="activity-content">
+                    <h3>BERMAIN</h3>
+                    <p>Hari Senin tanggal 23 Juni 2025 anak-anak melakukan permainan edukatif.</p>
+                </div>
+            </div>
+            <div class="activity">
+                <img src="sosial.jpg" alt="Aksi Sosial">
+                <div class="activity-content">
+                    <h3>AKSI SOSIAL</h3>
+                    <p>Hari Senin tanggal 23 Juni 2025 anak-anak melakukan kegiatan peduli lingkungan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <!-- KARYA ANAK -->
-  <section id="karya">
-    <h2>Karya Anak</h2>
-    <p>Beragam karya yang dihasilkan oleh anak-anak Taman Baca Anjelas.</p>
-    <!-- Tambahkan informasi karya anak -->
-  </section>
+    <!-- About Section -->
+    <section class="about" id="tentang">
+        <div class="container">
+            <h2 class="section-title">Tentang Kami</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Taman Baca Anjelas didirikan pada tanggal 19 Oktober 2019 di desa Bijeli oleh seorang pegiat literasi bemama Remy Taimenas, kegiatan pendampingan yang dilakukan di Taman Baca Anjelas antara lain Belajar, Bermain dan mendampingi anak-anak untuk belajar berinteraksi dengan lingkungan.</p>
+                    
+                    <h3>PENDIRI</h3>
+                    <div class="founders">
+                        <div class="founder">
+                            <img src="remy.jpg" alt="Remy Taimenas">
+                            <h4>Remy Taimenas</h4>
+                            <p>Pendiri</p>
+                        </div>
+                        <div class="founder">
+                            <img src="sahabat.jpg" alt="Sahabat TB Anjelas">
+                            <h4>SAHABAT TB ANJELAS</h4>
+                            <p>Tim Pendukung</p>
+                        </div>
+                        <div class="founder">
+                            <img src="alma.jpg" alt="Alma Costa">
+                            <h4>Alma Costa</h4>
+                            <p>Relawan</p>
+                        </div>
+                        <div class="founder">
+                            <img src="matias.jpg" alt="Matias Taimenas">
+                            <h4>Matias Taimenas</h4>
+                            <p>Relawan</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="tba-building.jpg" alt="Gedung Taman Baca Anjelas">
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <!-- TENTANG KAMI -->
-  <section id="tentang">
-    <h2>Tentang Kami</h2>
-    <p>Penjelasan lengkap tentang Taman Baca Anjelas.</p>
-    <!-- Tambahkan sejarah, misi, visi, dll -->
-  </section>
+    <!-- Children's Works Section -->
+    <section class="children-works" id="karya">
+        <div class="container">
+            <h2 class="section-title">Karya Anak</h2>
+            <div class="works-gallery">
+                <div class="work-item">
+                    <img src="mewarnai1.jpg" alt="Karya Mewarnai">
+                    <div class="work-caption">Mewarnai</div>
+                </div>
+                <div class="work-item">
+                    <img src="buku1.jpg" alt="Buku Karya Anak">
+                    <div class="work-caption">Buku</div>
+                </div>
+                <div class="work-item">
+                    <img src="mewarnai2.jpg" alt="Karya Mewarnai">
+                    <div class="work-caption">Mewarnai</div>
+                </div>
+                <div class="work-item">
+                    <img src="hat.jpg" alt="Template HAT">
+                    <div class="work-caption">Template HAT free</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <!-- GALERI -->
-  <section id="galeri">
-    <h2>Galeri</h2>
-    <p>Berbagai foto dan dokumentasi kegiatan di Taman Baca Anjelas.</p>
-    <!-- Tambahkan gambar-gambar -->
-  </section>
+    <!-- Gallery Section -->
+    <section class="gallery" id="galeri">
+        <div class="container">
+            <h2 class="section-title">Galeri</h2>
+            <div class="works-gallery">
+                <div class="work-item">
+                    <img src="gallery1.jpg" alt="Kegiatan Belajar">
+                    <div class="work-caption">Belajar</div>
+                </div>
+                <div class="work-item">
+                    <img src="gallery2.jpg" alt="Kegiatan Bermain">
+                    <div class="work-caption">Bermain</div>
+                </div>
+                <div class="work-item">
+                    <img src="gallery3.jpg" alt="Peduli Lingkungan">
+                    <div class="work-caption">Peduli Lingkungan</div>
+                </div>
+                <div class="work-item">
+                    <img src="gallery4.jpg" alt="Kegiatan Enteri">
+                    <div class="work-caption">Enteri</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <!-- KONTAK -->
-  <section id="kontak">
-    <h2>Kontak Kami</h2>
-    <p>Hubungi kami melalui email atau telepon.</p>
-    <form>
-      <input type="text" name="name" placeholder="Nama" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <textarea name="message" placeholder="Pesan Anda" required></textarea>
-      <button type="submit">Kirim Pesan</button>
-    </form>
-  </section>
+    <!-- Contact Section -->
+    <section class="contact" id="kontak">
+        <div class="container">
+            <h2 class="section-title">Kontak</h2>
+            <div class="contact-container">
+                <div class="contact-form">
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Nama</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Pesan</label>
+                            <textarea id="message" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Kirim</button>
+                    </form>
+                </div>
+                <div class="contact-info">
+                    <h3>Hubungi Kami</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Desa Bijeli, Noemuti, TTU, NTT</p>
+                    <p><i class="fas fa-envelope"></i> tbmanjelas@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +62 812-3456-7890</p>
+                    
+                    <div class="social-links">
+                        <h3>Media Sosial</h3>
+                        <a href="#"><i class="fab fa-tiktok"></i> @tamanbacaanjelas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <!-- FOOTER -->
-  <footer>
-    <p>&copy; 2025 Taman Baca Anjelas. All rights reserved.</p>
-  </footer>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Taman Baca Anjelas. All Rights Reserved.</p>
+        </div>
+    </footer>
 
+    <script>
+        // Simple JavaScript for language switcher
+        document.querySelectorAll('.language-switcher span').forEach(span => {
+            span.addEventListener('click', function() {
+                alert('Bahasa akan diubah ke ' + this.textContent);
+                // Actual language switching implementation would go here
+            });
+        });
+    </script>
 </body>
 </html>
