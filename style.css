@@ -2,14 +2,14 @@
 /* VARIABEL & RESET */
 /* ============================================= */
 :root {
-  --primary: #FF6B00;     /* Oranye utama */
-  --secondary: #FFD600;   /* Kuning */
-  --dark: #1A1A1A;       /* Hitam pekat */
-  --light: #F8F8F8;      /* Off-white */
-  --accent: #4CAF50;     /* Hijau aksen */
-  --text: #333333;       /* Warna teks utama */
-  --white: #FFFFFF;
-  --gray: #6C757D;
+  --primary: #bb86fc;
+  --secondary: #03dac6;
+  --dark: #121212;
+  --light: #1e1e1e;
+  --accent: #cf6679;
+  --text: #e0e0e0;
+  --white: #ffffff;
+  --gray: #a0a0a0;
   --transition: all 0.3s ease;
 }
 
@@ -24,11 +24,8 @@ html {
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  background-color: var(--dark);
   color: var(--text);
-  line-height: 1.7;
-  background-color: var(--white);
-  overflow-x: hidden;
 }
 
 /* ============================================= */
@@ -829,9 +826,14 @@ footer {
     font-size: 2rem;
   }
   
-  .pillar {
-    min-width: 100%;
-  }
+  .pillar,
+.activity,
+.founder,
+.work-item,
+.about, /* jika perlu ditambahkan */
+.gallery {
+  background-color: var(--light);
+}
   
   .activities-grid {
     grid-template-columns: 1fr;
