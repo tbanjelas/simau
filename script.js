@@ -1,3 +1,14 @@
+    // ======================
+    // TOGGLE DARK MODE
+    // ======================
+    const toggleDark = document.querySelector('#dark-toggle');
+    if (toggleDark) {
+        toggleDark.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     // ======================
     // GLOBAL VARIABLES
@@ -320,3 +331,14 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 });
+    // ======================
+    // TOGGLE DARK MODE
+    // ======================
+    const toggleDark = document.querySelector('#dark-toggle');
+    if (toggleDark) {
+        toggleDark.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+    }
+});
+
