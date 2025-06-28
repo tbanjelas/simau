@@ -1,164 +1,254 @@
 document.addEventListener('DOMContentLoaded', function() {
     // ======================
-    // INISIALISASI VARIABEL
+    // GLOBAL VARIABLES
     // ======================
     const body = document.body;
     const header = document.querySelector('header');
-    const mobileMenuToggle = document.createElement('div');
-    mobileMenuToggle.className = 'mobile-menu-toggle';
-    mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    const scrollUp = document.createElement('div');
+    scrollUp.className = 'scroll-up';
+    scrollUp.innerHTML = '<i class="fas fa-arrow-up"></i>';
+    body.appendChild(scrollUp);
+
+    // ======================
+    // NAVIGATION FUNCTIONALITY
+    // ======================
     
-    // ======================
-    // FUNGSI NAVIGASI
-    // ======================
-    function initNavigation() {
-        // Smooth scrolling untuk semua link navigasi
-        document.querySelectorAll('nav a').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                if (this.getAttribute('href').startsWith('#')) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Update nav aktif
-                    updateActiveNav(this);
-                    
-                    // Tutup mobile menu jika terbuka
-                    if (window.innerWidth <= 768) {
-                        document.querySelector('nav ul').classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                    }
-                }
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('nav a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            window.scrollTo({
+                top: targetElement.offsetTop - 80,
+                behavior: 'smooth'
             });
+            
+            // Update active nav item
+            updateActiveNav(this);
         });
+    });
+    
+    // Highlight current section in navigation
+    window.addEventListener('scroll', function() {
+        const scrollPosition = window.scrollY;
         
-        // Auto-highlight section yang aktif
-        window.addEventListener('scroll', throttle(function() {
-            const scrollPosition = window.scrollY + 100;
+        document.querySelectorAll('section').forEach(section => {
+            const sectionTop = section.offsetTop - 100;
+            const sectionHeight = section.offsetHeight;
+            const sectionId = section.getAttribute('id');
             
-            document.querySelectorAll('section').forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.offsetHeight;
-                const sectionId = section.getAttribute('id');
-                
-                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                    const correspondingNav = document.querySelector(`nav a[href="#${sectionId}"]`);
-                    if (correspondingNav) {
-                        updateActiveNav(correspondingNav);
-                    }
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                const correspondingNav = document.querySelector(`nav a[href="#${sectionId}"]`);
+                if (correspondingNav) {
+                    updateActiveNav(correspondingNav);
                 }
-            });
-        }, 100));
-        
-        function updateActiveNav(activeElement) {
-            document.querySelectorAll('nav a').forEach(link => {
-                link.classList.remove('active');
-            });
-            activeElement.classList.add('active');
-        }
-    }
-
-    // ======================
-    // MOBILE MENU
-    // ======================
-    function initMobileMenu() {
-        if (window.innerWidth <= 768) {
-            const nav = document.querySelector('nav ul');
-            header.insertBefore(mobileMenuToggle, document.querySelector('.language-search'));
-            
-            mobileMenuToggle.addEventListener('click', function() {
-                this.classList.toggle('active');
-                nav.classList.toggle('active');
-                body.classList.toggle('menu-open');
-            });
-            
-            // Tutup menu saat klik di luar
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('nav') && !e.target.closest('.mobile-menu-toggle')) {
-                    mobileMenuToggle.classList.remove('active');
-                    nav.classList.remove('active');
-                    body.classList.remove('menu-open');
-                }
-            });
-        }
-    }
-
-    // ======================
-    // FORM KONTAK
-    // ======================
-    function initContactForm() {
-        const contactForm = document.querySelector('.contact-form form');
-        if (!contactForm) return;
-        
-        const formInputs = contactForm.querySelectorAll('input, textarea');
-        
-        // Efek form field
-        formInputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('focused');
-            });
-            
-            input.addEventListener('blur', function() {
-                if (this.value === '') {
-                    this.parentElement.classList.remove('focused');
-                }
-            });
-            
-            // Cek isi input saat load
-            if (input.value !== '') {
-                input.parentElement.classList.add('focused');
             }
         });
-        
-        // Submit handler
+
+        // Show/hide scroll up button
+        if (window.scrollY > 300) {
+            scrollUp.classList.add('show');
+        } else {
+            scrollUp.classList.remove('show');
+        }
+
+        // Header shadow on scroll
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    function updateActiveNav(activeElement) {
+        document.querySelectorAll('nav a').forEach(link => {
+            link.classList.remove('active');
+        });
+        activeElement.classList.add('active');
+    }
+
+    // Scroll to top functionality
+    scrollUp.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // ======================
+    // LANGUAGE SWITCHER
+    // ======================
+    const languageSwitcher = document.querySelector('.language-switcher');
+    if (languageSwitcher) {
+        languageSwitcher.addEventListener('click', function(e) {
+            if (e.target.tagName === 'SPAN') {
+                const language = e.target.textContent;
+                const languageText = language === 'ID' ? 'Bahasa Indonesia' : 'English';
+                
+                showNotification(`Bahasa diubah ke ${languageText}`);
+                
+                document.querySelectorAll('.language-switcher span').forEach(span => {
+                    span.classList.remove('active');
+                });
+                e.target.classList.add('active');
+            }
+        });
+    }
+
+    // ======================
+    // SEARCH FUNCTIONALITY
+    // ======================
+    const searchForm = document.querySelector('.search-bar');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const searchInput = this.querySelector('input');
+            const searchTerm = searchInput.value.trim();
+            
+            if (searchTerm) {
+                showNotification(`Mencari: "${searchTerm}"`);
+                searchInput.value = '';
+            }
+        });
+    }
+
+    // ======================
+    // CONTACT FORM HANDLING
+    // ======================
+    const contactForm = document.querySelector('.contact-form form');
+    if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const formData = {
-                name: this.querySelector('#name').value.trim(),
-                email: this.querySelector('#email').value.trim(),
-                message: this.querySelector('#message').value.trim()
+                name: this.querySelector('#name').value,
+                email: this.querySelector('#email').value,
+                message: this.querySelector('#message').value
             };
             
-            // Validasi
+            // Basic validation
             if (!formData.name || !formData.email || !formData.message) {
                 showNotification('Harap isi semua kolom', 'error');
                 return;
             }
             
             if (!validateEmail(formData.email)) {
-                showNotification('Email tidak valid', 'error');
+                showNotification('Harap masukkan alamat email yang valid', 'error');
                 return;
             }
             
-            // Simpan ke localStorage (simulasi)
-            saveContactMessage(formData);
-            
-            // Tampilkan notifikasi
-            showNotification('Pesan berhasil dikirim! Terima kasih', 'success');
-            
-            // Reset form
+            // Simulate form submission
+            showNotification('Pesan Anda telah terkirim! Kami akan segera menghubungi Anda.', 'success');
             this.reset();
-            formInputs.forEach(input => {
-                input.parentElement.classList.remove('focused');
-            });
+            
+            // In a real implementation, you would send the data to a server here
+            // sendFormData(formData);
         });
     }
 
     // ======================
-    // FUNGSI BANTU
+    // GALLERY FUNCTIONALITY
+    // ======================
+    // Lightbox functionality for gallery images
+    document.querySelectorAll('.work-item img').forEach(image => {
+        image.addEventListener('click', function() {
+            createLightbox(this);
+        });
+    });
+
+    function createLightbox(image) {
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox';
+        
+        const lightboxContent = document.createElement('div');
+        lightboxContent.className = 'lightbox-content';
+        
+        const lightboxImage = document.createElement('img');
+        lightboxImage.src = image.src;
+        lightboxImage.alt = image.alt;
+        
+        const caption = document.createElement('p');
+        caption.textContent = image.parentElement.querySelector('.work-caption').textContent;
+        
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'close-btn';
+        closeBtn.innerHTML = '&times;';
+        
+        lightboxContent.appendChild(closeBtn);
+        lightboxContent.appendChild(lightboxImage);
+        lightboxContent.appendChild(caption);
+        lightbox.appendChild(lightboxContent);
+        body.appendChild(lightbox);
+        
+        // Add active class after a short delay
+        setTimeout(() => {
+            lightbox.classList.add('active');
+        }, 10);
+        
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            setTimeout(() => {
+                body.removeChild(lightbox);
+            }, 300);
+        }
+        
+        closeBtn.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+        
+        // Close with ESC key
+        document.addEventListener('keydown', function escClose(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+                document.removeEventListener('keydown', escClose);
+            }
+        });
+    }
+
+    // ======================
+    // ANIMATIONS
+    // ======================
+    // Animate elements when they come into view
+    const animateOnScroll = function() {
+        const elements = document.querySelectorAll('.pillar, .activity, .founder, .work-item');
+        
+        elements.forEach(element => {
+            const elementPosition = element.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+            
+            if (elementPosition < windowHeight - 100) {
+                element.classList.add('animated');
+            }
+        });
+    };
+    
+    // Set initial state for animated elements
+    document.querySelectorAll('.pillar, .activity, .founder, .work-item').forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(30px)';
+        element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    });
+    
+    // Run once on load and then on scroll
+    animateOnScroll();
+    window.addEventListener('scroll', animateOnScroll);
+
+    // ======================
+    // HELPER FUNCTIONS
     // ======================
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.textContent = message;
-        document.body.appendChild(notification);
+        
+        body.appendChild(notification);
         
         setTimeout(() => {
             notification.classList.add('show');
@@ -167,50 +257,66 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => {
-                document.body.removeChild(notification);
+                body.removeChild(notification);
             }, 300);
         }, 3000);
-    }
-    
-    function saveContactMessage(data) {
-        let messages = JSON.parse(localStorage.getItem('tba_contact_messages') || '[]');
-        messages.push({
-            ...data,
-            date: new Date().toISOString()
-        });
-        localStorage.setItem('tba_contact_messages', JSON.stringify(messages));
     }
     
     function validateEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     }
-    
-    function throttle(func, limit) {
-        let lastFunc;
-        let lastRan;
-        return function() {
-            const context = this;
-            const args = arguments;
-            if (!lastRan) {
-                func.apply(context, args);
-                lastRan = Date.now();
-            } else {
-                clearTimeout(lastFunc);
-                lastFunc = setTimeout(function() {
-                    if ((Date.now() - lastRan) >= limit) {
-                        func.apply(context, args);
-                        lastRan = Date.now();
-                    }
-                }, limit - (Date.now() - lastRan));
-            }
-        }
-    }
 
     // ======================
-    // INISIALISASI SEMUA FITUR
+    // ADDITIONAL STYLES FOR JS ELEMENTS
     // ======================
-    initNavigation();
-    initMobileMenu();
-    initContactForm();
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Scroll Up Button */
+        .scroll-up {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .scroll-up.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .scroll-up:hover {
+            background-color: #e05d00;
+            transform: translateY(-5px);
+        }
+        
+        /* Scrolled Header */
+        header.scrolled {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Animated Elements */
+        .pillar.animated,
+        .activity.animated,
+        .founder.animated,
+        .work-item.animated {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+    `;
+    document.head.appendChild(style);
 });
