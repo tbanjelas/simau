@@ -3368,3 +3368,71 @@ o	Selalu cek URL di browser sebelum login.
 o	Jangan pernah isi data login di website yang mencurigakan.
 o	Kenali ciri-ciri phishing seperti link aneh dan permintaan data berlebihan.
 Cara ubah tampilan html ke gambar biasa
+
+Simulasi Tracking Pixel untuk Melacak Lokasi via Pesan
+Apa yang diperlukan:
+
+Sebuah server atau hosting (bisa pakai layanan gratis seperti GitHub Pages, Netlify, atau server sederhana)
+
+Gambar 1x1 pixel transparan (bisa buat sendiri, atau cari di internet)
+
+Script kecil di server untuk catat data saat gambar dipanggil
+
+1. Membuat gambar tracking pixel
+Buat gambar transparan 1x1 pixel, misalnya namanya pixel.png
+
+2. Script server untuk catat data
+Misal kamu punya server yang bisa menjalankan PHP. Buat file bernama track.php dengan isi:
+
+php
+Copy
+Edit
+<?php
+// Simpan data IP dan waktu akses ke file log
+$ip = $_SERVER['REMOTE_ADDR'];
+$agent = $_SERVER['HTTP_USER_AGENT'];
+$time = date('Y-m-d H:i:s');
+$log = "Time: $time, IP: $ip, Agent: $agent\n";
+file_put_contents('log.txt', $log, FILE_APPEND);
+
+// Kirim gambar 1x1 pixel transparan
+header('Content-Type: image/png');
+readfile('pixel.png');
+?>
+Penjelasan:
+
+Saat gambar ini dipanggil, script akan mencatat IP dan User-Agent pengakses ke log.txt.
+
+Setelah itu, script mengirim gambar 1x1 pixel ke pengakses agar terlihat normal.
+
+3. Cara pakai di pesan
+Kamu kirim pesan ke teman:
+
+Halo, cek info penting ini ya:
+<img src="http://yourserver.com/track.php" alt="" />
+
+Kalau temanmu membuka pesan itu di aplikasi yang bisa render gambar, otomatis browser/aplikasi dia akan minta gambar itu dari server kamu.
+
+4. Hasil yang kamu dapat
+Kamu buka file log.txt di server, kamu akan lihat:
+
+yaml
+Copy
+Edit
+Time: 2025-07-30 10:30:01, IP: 123.45.67.89, Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)...
+Time: 2025-07-30 10:31:15, IP: 98.76.54.32, Agent: Mozilla/5.0 (Linux; Android 9; SM-G960F)...
+Dari IP kamu bisa kira-kira lokasi (pakai layanan geo-IP).
+
+Dari User-Agent bisa tahu perangkat dan browser yang dipakai.
+
+Catatan:
+Ini hanya simulasi untuk edukasi.
+
+Penjahat sering pakai teknik serupa tapi lebih canggih.
+
+Jangan lupa selalu jaga privasi dan jangan buka link/gambar yang mencurigakan.
+
+Kalau kamu mau, saya bisa bantu jelaskan cara dapatkan geo-lokasi dari IP juga supaya edukasi makin lengkap.
+Ini akan bukti nyata agar temanmu paham bahaya dibalik link atau gambar yang kelihatannya biasa saja.
+
+Mau lanjut?
