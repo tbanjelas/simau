@@ -1,0 +1,18 @@
+# Blokir user-agent pencuri konten
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Daftar User-Agent yang diblokir
+  RewriteCond %{HTTP_USER_AGENT} ^.*(HTTrack|wget|curl|libwww-perl|Python-urllib|nikto|sqlmap|masscan|fimap|nessus).*$ [NC]
+  RewriteRule .* - [F,L]
+</IfModule>
+
+# Tambahan keamanan dasar
+Options -Indexes
+ServerSignature Off
+
+# Proteksi folder (jika disimpan di root .htaccess)
+<FilesMatch "\.(ini|log|sh|sql|bak)$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
